@@ -3,6 +3,7 @@ from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from .models import User
 from .models import BuddyProfile, GroupProfile
 from django.core.exceptions import ValidationError
+import json
 
 class CustomUserCreationForm(UserCreationForm):
     CHOICES = (
@@ -38,17 +39,17 @@ class BuddyProfileForm(forms.ModelForm):
         model = BuddyProfile
         fields = ['fitness_goals', 'workout_preferences', 'availability']
         widgets = {
-              'fitness_goals': forms.TextInput(attrs={'class': 'form-control'}),
-              'workout_preferences': forms.TextInput(attrs={'class': 'form-control'}),
-              'availability': forms.TextInput(attrs={'class': 'form-control'}),
+            'fitness_goals': forms.CheckboxSelectMultiple(attrs={'class': 'form-check-input'}),
+            'workout_preferences': forms.CheckboxSelectMultiple(attrs={'class': 'form-check-input'}),
+            'availability': forms.CheckboxSelectMultiple(attrs={'class': 'form-check-input'}),
         }
 
 class GroupProfileForm(forms.ModelForm):
     class Meta:
         model = GroupProfile
-        fields = ['activity_type', 'location', 'schedule']
+        fields = ['name', 'activity_types', 'schedules', 'locations']
         widgets = {
-            'activity_type': forms.TextInput(attrs={'class': 'form-control'}),
-            'location': forms.TextInput(attrs={'class': 'form-control'}),
-            'schedule': forms.TextInput(attrs={'class': 'form-control'}),
-       }
+            'activity_types': forms.CheckboxSelectMultiple(attrs={'class': 'form-check-input'}),
+            'schedules': forms.CheckboxSelectMultiple(attrs={'class': 'form-check-input'}),
+            'locations': forms.CheckboxSelectMultiple(attrs={'class': 'form-check-input'}),
+        }
