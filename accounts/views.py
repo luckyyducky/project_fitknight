@@ -26,21 +26,16 @@ def buddy_finder_portal(request):
             request.user.save()
             
             # Create or get group profile before redirecting
-            GroupProfile.objects.get_or_create(user=request.user)
+            GroupProfile.objects.get_or_create(creator=request.user)
             return redirect('group_organizer_portal')
         
         form = BuddyProfileForm(request.POST, instance=buddy_profile) if buddy_profile else BuddyProfileForm(request.POST)
         if form.is_valid():
             profile = form.save(commit=False)
+            profile.fitness_goals = form.cleaned_data['fitness_goals']  # Directly assign the list
             profile.user = request.user
             profile.save()
-            
-            # Ensure user type is set correctly when saving profile
-            request.user.is_buddy_finder = True
-            request.user.is_group_organizer = False
-            request.user.save()
-            
-            messages.success(request, 'Buddy profile updated successfully!')
+            messages.success(request, "Profile updated successfully!")
             return redirect('home')
         else:
             messages.error(request, 'Buddy profile update Failed!')   
@@ -88,6 +83,76 @@ def group_organizer_portal(request):
         else:
             messages.error(request, 'Group profile update Failed!')        
     return render(request, 'accounts/group_organizer_portal.html', {'form': form})
+
+@login_required
+def my_profile_view(request):
+    if request.method == 'POST':
+        action = request.POST.get('action')
+        
+        # Handle profile switching
+        if action == 'switch_to_buddy':
+            request.user.is_buddy_finder = True
+            request.user.is_group_organizer = False
+            request.user.save()
+            # Create buddy profile if it doesn't exist
+            BuddyProfile.objects.get_or_create(user=request.user)
+            messages.success(request, "Switched to Buddy Finder!")
+            return redirect('buddy_finder_portal')
+            
+        elif action == 'switch_to_organizer':
+            request.user.is_buddy_finder = False
+            request.user.is_group_organizer = True
+            request.user.save()
+            # Create group profile if it doesn't exist
+            GroupProfile.objects.get_or_create(creator=request.user)
+            messages.success(request, "Switched to Group Organizer!")
+            return redirect('group_organizer_portal')
+
+        # Handle profile updates
+        if request.user.is_buddy_finder:
+            try:
+                profile = request.user.buddyprofile
+                form = BuddyProfileForm(request.POST, instance=profile)
+            except BuddyProfile.DoesNotExist:
+                profile = None
+                form = BuddyProfileForm(request.POST)
+        else:
+            try:
+                profile = request.user.groupprofile
+                form = GroupProfileForm(request.POST, instance=profile)
+            except GroupProfile.DoesNotExist:
+                profile = None
+                form = GroupProfileForm(request.POST)
+
+        if form.is_valid():
+            profile = form.save(commit=False)
+            profile.user = request.user
+            profile.save()
+            messages.success(request, "Profile updated successfully!")
+            return redirect('my_profile')
+        else:
+            messages.error(request, "Please correct the errors below.")
+    
+    # GET request - display current profile
+    else:
+        if request.user.is_buddy_finder:
+            try:
+                profile = request.user.buddyprofile
+                form = BuddyProfileForm(instance=profile)
+            except BuddyProfile.DoesNotExist:
+                form = BuddyProfileForm()
+        else:
+            try:
+                profile = request.user.groupprofile
+                form = GroupProfileForm(instance=profile)
+            except GroupProfile.DoesNotExist:
+                form = GroupProfileForm()
+
+    return render(request, 'accounts/my_profile.html', {
+        'form': form,
+        'is_buddy': request.user.is_buddy_finder,
+        'is_organizer': request.user.is_group_organizer
+    })
 
 def signup_view(request):
     if request.method == 'POST':
@@ -218,72 +283,3 @@ def edit_profile(request):
         'is_organizer': request.user.is_group_organizer
     })
 
-@login_required
-def my_profile_view(request):
-    if request.method == 'POST':
-        action = request.POST.get('action')
-        
-        # Handle profile switching
-        if action == 'switch_to_buddy':
-            request.user.is_buddy_finder = True
-            request.user.is_group_organizer = False
-            request.user.save()
-            # Create buddy profile if it doesn't exist
-            BuddyProfile.objects.get_or_create(user=request.user)
-            messages.success(request, "Switched to Buddy Finder!")
-            return redirect('buddy_finder_portal')
-            
-        elif action == 'switch_to_organizer':
-            request.user.is_buddy_finder = False
-            request.user.is_group_organizer = True
-            request.user.save()
-            # Create group profile if it doesn't exist
-            GroupProfile.objects.get_or_create(user=request.user)
-            messages.success(request, "Switched to Group Organizer!")
-            return redirect('group_organizer_portal')
-
-        # Handle profile updates
-        if request.user.is_buddy_finder:
-            try:
-                profile = request.user.buddyprofile
-                form = BuddyProfileForm(request.POST, instance=profile)
-            except BuddyProfile.DoesNotExist:
-                profile = None
-                form = BuddyProfileForm(request.POST)
-        else:
-            try:
-                profile = request.user.groupprofile
-                form = GroupProfileForm(request.POST, instance=profile)
-            except GroupProfile.DoesNotExist:
-                profile = None
-                form = GroupProfileForm(request.POST)
-
-        if form.is_valid():
-            profile = form.save(commit=False)
-            profile.user = request.user
-            profile.save()
-            messages.success(request, "Profile updated successfully!")
-            return redirect('my_profile')
-        else:
-            messages.error(request, "Please correct the errors below.")
-    
-    # GET request - display current profile
-    else:
-        if request.user.is_buddy_finder:
-            try:
-                profile = request.user.buddyprofile
-                form = BuddyProfileForm(instance=profile)
-            except BuddyProfile.DoesNotExist:
-                form = BuddyProfileForm()
-        else:
-            try:
-                profile = request.user.groupprofile
-                form = GroupProfileForm(instance=profile)
-            except GroupProfile.DoesNotExist:
-                form = GroupProfileForm()
-
-    return render(request, 'accounts/my_profile.html', {
-        'form': form,
-        'is_buddy': request.user.is_buddy_finder,
-        'is_organizer': request.user.is_group_organizer
-    })
