@@ -19,10 +19,31 @@
                         </div>
                     {% endfor %}
                 {% endif %}
-    
+                {% load custom_filters %}
+
                 <form method="post">
                     {% csrf_token %}
-                    {{ form.as_p }}
+                    {% for field in form %}
+                    <div class="mb-3">
+                        <label class="form-label">{{ field.label }}</label>
+                        {% if field.field.widget|type_name == "CheckboxSelectMultiple" %}
+                        <div class="form-check">
+                            {% for subfield in field %}
+                            <div class="form-check">
+                                {{ subfield }} {{ subfield.label }}
+                            </div>
+                            {% endfor %}
+                        </div>
+                        {% else %}
+                        {{ field }}
+                        {% endif %}
+                        {% if field.errors %}
+                        <div class="text-danger">
+                            {{ field.errors }}
+                        </div>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
                     <div class="d-flex gap-2">
                         <button type="submit" class="btn btn-primary">Save Profile</button>
                         <button type="submit" name="fill_later" class="btn btn-secondary">Fill Details Later</button>
