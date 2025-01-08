@@ -175,7 +175,7 @@ def signup_view(request):
                 if user.is_buddy_finder:
                     BuddyProfile.objects.create(user=user)
                 else:
-                    GroupProfile.objects.create(user=user)
+                    GroupProfile.objects.create(creator=user)
                 
                 raw_password = form.cleaned_data.get('password1')
                 authenticated_user = authenticate(username=user.username, password=raw_password)
