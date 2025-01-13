@@ -1,0 +1,126 @@
+{% extends 'buddy_portal/base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 class="text-center mb-4">Fill Out Your Buddy Finder Details</h2>
+
+    <div class="card-header bg-light">
+        <h5 class="mb-0">Personal Information</h5>
+    </div>
+
+    <!-- Details Column -->
+    <div class="col-md-9">
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <label class="fw-bold">Username:</label>
+                <div class="ms-3">{{ user.username }}</div>
+            </div>
+            <div class="col-md-6 mb-3">
+                <label class="fw-bold">Email:</label>
+                <div class="ms-3">{{ user.email }}</div>
+            </div>
+            <div class="col-md-6 mb-3">
+                <label class="fw-bold">Mobile Number:</label>
+                <div class="ms-3">{{ user.phone_number }}</div>
+            </div>
+            <div class="col-md-6 mb-3">
+                <label class="fw-bold">User Type:</label>
+                <div class="ms-3">
+                    {% if user.is_buddy_finder %}
+                        Buddy Finder
+                    {% elif user.is_group_organizer %}
+                        Group Organizer
+                    {% else %}
+                        Not specified
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        <!-- Profile Picture Section -->
+        <div class="mb-4">
+            <label for="id_profile_picture" class="form-label">Profile Picture</label>
+            <div class="d-flex align-items-center">
+                <div class="me-3">
+                    {% if profile.profile_picture %}
+                        <img src="{{ profile.profile_picture.url }}" class="img-thumbnail" alt="Profile Picture" style="max-width: 150px;">
+                    {% else %}
+                        <img src="{% static 'profile_pics/default.png' %}" class="img-thumbnail" alt="Default Profile Picture" style="max-width: 150px;">
+                    {% endif %}
+                    <p class="small text-muted">{% if profile.profile_picture %}Edit{% else %}Upload{% endif %} Profile Picture</p>
+                </div>
+                {{ form.profile_picture }}
+            </div>
+        </div>
+        <!-- About Section -->
+        <div class="form-group mb-3">
+            <label for="id_about">About</label>
+            {{ form.about }}
+        </div>
+
+        <!-- Fitness Goals Section -->
+        <div class="form-group mb-3">
+            <label>Fitness Goals</label>
+            {% for goal in form.fitness_goals %}
+              <div class="form-check ms-4">
+                {{ goal }}
+              </div>
+            {% endfor %}
+          </div>
+
+        <!-- Workout Preferences Section -->
+        <div class="form-group mb-3">
+            <label>Workout Preferences</label>
+            {% for goal in form.workout_preferences %}
+              <div class="form-check ms-4">
+                {{ goal }}
+              </div>
+            {% endfor %}
+          </div>
+
+        <!-- Availability Section -->
+        <div class="form-group mb-3">
+            <label>Availability</label>
+            {% for goal in form.availability %}
+              <div class="form-check ms-4">
+                {{ goal }}
+              </div>
+            {% endfor %}
+          </div>
+
+        <!-- Milestones Section -->
+        <div class="form-group mb-3">
+            <label for="id_milestones">Milestones</label>
+            {{ form.milestones }}
+        </div>
+
+        <!-- Privacy Settings -->
+        <div class="form-group mb-3">
+            <label>Privacy Settings</label>
+            <div class="form-check">
+                {{ form.show_email }}
+                <label class="form-check-label" for="{{ form.show_email.id_for_label }}">
+                    Show Email
+                </label>
+            </div>
+            <div class="form-check">
+                {{ form.show_phone }}
+                <label class="form-check-label" for="{{ form.show_phone.id_for_label }}">
+                    Show Phone Number
+                </label>
+            </div>
+        </div>
+
+
+        <!-- Submit Button -->
+        <div class="text-center">
+            <button type="submit" class="btn btn-primary btn-lg">Submit</button>
+        </div>
+    </form>
+</div>
+{% endblock %}

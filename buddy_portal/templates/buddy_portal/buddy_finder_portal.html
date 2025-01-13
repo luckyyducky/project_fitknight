@@ -1,0 +1,36 @@
+{% extends 'buddy_portal/base.html' %}
+{% load static %}
+{% block content %}
+    <h2>Buddy Finder Portal</h2>
+    
+    {% if buddy_profiles %}
+        <ul>
+            {% for profile in buddy_profiles %}
+                <li>
+                    <img 
+                        src="{% if profile.profile_picture and profile.profile_picture.name %}{{ profile.profile_picture.url }}{% else %}{{ MEDIA_URL }}/media/profile_pics/default.png{% endif %}" 
+                        alt="Profile Picture" 
+                        width="150" 
+                        height="150"
+                    >
+
+                    <div class="buddy-profile">
+                        <h4>{{ profile.user.username }}</h4>
+                        <p><strong>Fitness Goals:</strong> {{ profile.fitness_goals }}</p>
+                        <p><strong>Workout Preferences:</strong> {{ profile.workout_preferences }}</p>
+                        <p><strong>Availability:</strong> {{ profile.availability }}</p>
+                        <p><strong>Milestones:</strong> {{ profile.milestones }}</p>
+                        {% if profile.show_phone and profile.contact_phone %}
+                            <p><strong>Contact Phone:</strong> {{ profile.contact_phone }}</p>
+                        {% endif %}
+                        {% if profile.show_email and profile.contact_email %}
+                            <p><strong>Contact Email:</strong> {{ profile.contact_email }}</p>
+                        {% endif %}
+                    </div>
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>No buddy profiles available at the moment.</p>
+    {% endif %}
+{% endblock %}

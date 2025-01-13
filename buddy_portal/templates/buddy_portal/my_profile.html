@@ -1,0 +1,134 @@
+{% extends 'buddy_portal/base.html' %}
+{% load static %}
+{% block content %}
+    <div class="container mt-4">
+        <h2 class="text-center mb-4">My Profile</h2>
+
+        <div class="card-header bg-light">
+            <h5 class="mb-0">Personal Information</h5>
+        </div>
+    
+        <!-- Details Column -->
+        <div class="col-md-9">
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label class="fw-bold">Username:</label>
+                    <div class="ms-3">{{ user.username }}</div>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label class="fw-bold">Email:</label>
+                    <div class="ms-3">{{ user.email }}</div>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label class="fw-bold">Mobile Number:</label>
+                    <div class="ms-3">{{ user.phone_number }}</div>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label class="fw-bold">User Type:</label>
+                    <div class="ms-3">
+                        {% if user.is_buddy_finder %}
+                            Buddy Finder
+                        {% elif user.is_group_organizer %}
+                            Group Organizer
+                        {% else %}
+                            Not specified
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+
+        <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            <!-- Profile Picture Section -->
+            <div class="mb-4">
+            <label for="{{ form.profile_picture.id_for_label }}" class="form-label">Profile Picture</label>
+            <div class="d-flex justify-content-start">
+                <img src="{{ profile.profile_picture.url }}" class="img-thumbnail me-3" alt="Profile Picture" style="max-width: 150px;">
+                {{ form.profile_picture }}
+            </div>
+            <small class="form-text text-muted">You can upload a new profile picture or leave it as is.</small>
+            </div>
+
+            <!-- Fitness Goals Section -->
+            <div class="mb-3">
+                <label class="form-label">{{ form.fitness_goals.label }}</label>
+                <div>
+                    {% for choice in form.fitness_goals %}
+                        <div class="form-check">
+                            {{ choice.tag }}
+                            <label class="form-check-label" for="{{ choice.id_for_label }}">{{ choice.choice_label }}</label>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- Workout Preferences Section -->
+            <div class="mb-3">
+                <label class="form-label">{{ form.workout_preferences.label }}</label>
+                <div>
+                    {% for choice in form.workout_preferences %}
+                        <div class="form-check">
+                            {{ choice.tag }}
+                            <label class="form-check-label" for="{{ choice.id_for_label }}">{{ choice.choice_label }}</label>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- Availability Section -->
+            <div class="mb-3">
+                <label class="form-label">{{ form.availability.label }}</label>
+                <div>
+                    {% for choice in form.availability %}
+                        <div class="form-check">
+                            {{ choice.tag }}
+                            <label class="form-check-label" for="{{ choice.id_for_label }}">{{ choice.choice_label }}</label>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- Milestones Section -->
+            <div class="mb-3">
+                <label for="{{ form.milestones.id_for_label }}" class="form-label">{{ form.milestones.label }}</label>
+                {{ form.milestones }}
+            </div>
+
+            <div class="card mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">Password Settings</h5>
+                    <p class="card-text">Manage your password to keep your account secure.</p>
+                    <div class="d-flex gap-2">
+                        <a href="{% url 'change_password' %}" class="btn btn-primary">
+                            Change Password
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Privacy Settings Section -->
+            <div class="mb-3">
+                <label class="form-label">Privacy Settings</label>
+                <div class="form-check">
+                    {{ form.show_email }}
+                    <label class="form-check-label" for="{{ form.show_email.id_for_label }}">
+                        Show Email ({{ user.buddyprofile.contact_email }}) to other users
+                    </label>
+                </div>
+                <div class="form-check">
+                    {{ form.show_phone }}
+                    <label class="form-check-label" for="{{ form.show_phone.id_for_label }}">
+                        Show Phone Number ({{ user.buddyprofile.contact_phone }}) to other users
+                    </label>
+                </div>
+            </div>
+
+            <!-- Submit Button -->
+            <div class="text-center">
+                <button type="submit" class="btn btn-primary">Save Changes</button>
+            </div>
+        </form>
+    </div>
+{% endblock %}
