@@ -24,6 +24,15 @@ class BuddyProfile(models.Model):
         ('evening', 'Evening'),
         ('weekends', 'Weekends'),
     ]
+
+    LOCATION_CHOICES = [
+        ('park', 'Park'),
+        ('gym', 'Gym'),
+        ('community center', 'Community Center'),
+        ('beach', 'Beach'),
+        ('indoor', 'Indoor Facility'),
+        ('outdoor', 'Outdoor Location'),
+    ]
     
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, primary_key=True)
     profile_picture = models.ImageField(upload_to='profile_pics/', blank=True, null=True)
@@ -32,6 +41,7 @@ class BuddyProfile(models.Model):
     workout_preferences = MultiSelectField(choices=WORKOUT_PREFERENCES_CHOICES, max_choices=5, blank=True)
     availability = MultiSelectField(choices=AVAILABILITY_CHOICES, max_choices=4, blank=True)
     milestones = models.TextField(blank=True, help_text="Add key fitness milestones or achievements")
+    location = MultiSelectField(choices=LOCATION_CHOICES, max_choices=6, blank=True)
     contact_phone = models.CharField(max_length=20, blank=True)
     contact_email = models.EmailField(blank=True, null=True)
 
@@ -40,3 +50,18 @@ class BuddyProfile(models.Model):
 
     def __str__(self):
         return f"Buddy Profile of: {self.user.username}"
+    
+class JoinRequest(models.Model):
+    STATUS_CHOICES = [
+        ('PENDING', 'Pending'),
+        ('ACCEPTED', 'Accepted'),
+        ('DECLINED', 'Declined'),
+    ]
+    
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='join_requests')
+    group = models.ForeignKey('group_portal.Group', on_delete=models.CASCADE, related_name='join_requests')
+    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='PENDING')
+    created_at = models.DateTimeField(auto_now_add=True)
+    
+    class Meta:
+        unique_together = ['user', 'group']
