@@ -1,49 +1,45 @@
-#FitKnight
+# FitKnight
 
-FitKnight is a web platform that connects fitness enthusiasts, enabling them to find workout partners and join fitness groups. Users can choose to be either a Buddy Finder looking for workout partners or a Group Organizer creating and managing fitness groups.
-##Features
+FitKnight is a web platform designed to connect fitness enthusiasts, helping them find workout partners or create and manage fitness groups. Users can sign up as either a **Buddy Finder** or a **Group Organizer** for a personalized fitness experience.
 
-###User Authentication
+## Features
 
--Custom username and password authentication
--Profile picture upload with default options
--Role selection during signup (Buddy Finder or Group Organizer)
--Personalized onboarding flow based on user role
+### User Authentication
+- Custom username and password-based authentication
+- Profile picture upload with default option
+- Role selection during signup: Buddy Finder or Group Organizer
+- Personalized onboarding flow based on selected role
 
-###Buddy Finder Portal
+### Buddy Finder Portal
+- Personalized dashboard with recommended workout partners
+- Advanced filtering system for finding compatible workout buddies
+- Access to available fitness groups
+- Detailed profile management:
+  - Personal information and fitness goals
+  - Activity tracking and milestones
+  - Customizable privacy settings
+- Real-time notifications for group updates and join requests
 
--Personalized dashboard with recommended workout partners
--Advanced filtering system for finding compatible buddies
--Access to available fitness groups
--Detailed profile management
---Personal information and fitness goals
---Activity tracking and milestones
---Customizable privacy settings
--Real-time notifications for group updates
+### Group Portal
+- Comprehensive group management dashboard
+- Group creation and editing capabilities
+- Member management system
+- Join request handling
+- Detailed group profiles including:
+  - Activity schedules
+  - Location information
+  - Member listings
+  - Organizer details
 
-###Group Portal
+## Technical Stack
+- **Backend**: Django
+- **Frontend**: HTML, CSS, JavaScript, Bootstrap
+- **Database**: Django Default Database (SQLite)
+- **Authentication**: Django Auth System
+- **Media Handling**: Django File Storage
+- **Static Files**: Django Static Files
 
-Comprehensive group management dashboard
-Group creation and editing capabilities
-Member management system
-Join request handling
-Detailed group profiles including:
-
-Activity schedules
-Location information
-Member listings
-Organizer details
-
-##Technical Stack
-
-Backend: Django
-Frontend: HTML, CSS, JavaScript, Bootstrap
-Database: Django Default Database
-Authentication: Django Auth System
-Media Handling: Django File Storage
-Static Files: Django Static Files
-
-##Installation
+## Installation
 
 Clone the repository:
 
