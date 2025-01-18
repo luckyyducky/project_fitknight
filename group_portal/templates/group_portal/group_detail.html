@@ -1,0 +1,174 @@
+{% extends "group_portal/base.html" %}
+{% load static %}
+{% block content %}
+<div class="container mt-5">
+    <!-- Group Header Section -->
+    <div class="row mb-5">
+        <!-- Group Picture Column -->
+        <div class="col-md-4">
+            {% if group.group_picture %}
+                <img src="{{ group.group_picture.url }}" alt="{{ group.group_name }}" 
+                     class="img-fluid rounded shadow" style="width: 100%; max-height: 300px; object-fit: contain;">
+            {% else %}
+                <img src="{% static 'profile_pics/default.png' %}" alt="Default Group Picture"
+                     class="img-fluid rounded shadow" style="width: 100%; max-height: 300px; object-fit: contain;">
+            {% endif %}
+        </div>
+        <!-- Group Info Column -->
+        <div class="col-md-8">
+            <h2 class="mb-3">{{ group.group_name }}</h2>
+            <p class="lead mb-4">{{ group.description }}</p>
+        </div>
+    </div>
+
+    <!-- Edit Form Section -->
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <h3 class="card-title mb-4">Edit Group Details</h3>
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                
+                <!-- Basic Info Row -->
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="group_name" class="form-label fw-bold">Group Name</label>
+                            {{ form.group_name }}
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="group_picture" class="form-label fw-bold">Group Picture</label>
+                            {{ form.group_picture }}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Description -->
+                <div class="form-group mb-4">
+                    <label for="description" class="form-label fw-bold">Description</label>
+                    {{ form.description }}
+                </div>
+
+                <!-- Multiple Choice Sections -->
+                <div class="row">
+                    <div class="col-12 mb-4">
+                        <label for="activity_type" class="form-label fw-bold">Activity Type</label>
+                        <div class="border rounded p-3 bg-light">
+                            <div class="row">
+                                {% for choice in form.activity_type %}
+                                    <div class="col-md-4 mb-2">
+                                        <div class="form-check">
+                                            {{ choice }}
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-12 mb-4">
+                        <label for="schedule" class="form-label fw-bold">Schedule</label>
+                        <div class="border rounded p-3 bg-light">
+                            <div class="row">
+                                {% for choice in form.schedule %}
+                                    <div class="col-md-4 mb-2">
+                                        <div class="form-check">
+                                            {{ choice }}
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-12 mb-4">
+                        <label for="location" class="form-label fw-bold">Location</label>
+                        <div class="border rounded p-3 bg-light">
+                            <div class="row">
+                                {% for choice in form.location %}
+                                    <div class="col-md-4 mb-2">
+                                        <div class="form-check">
+                                            {{ choice }}
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Submit Button -->
+                <div class="text-center">
+                    <button type="submit" class="btn btn-primary btn-lg">Save Changes</button>
+                </div>
+            </form>
+            <div class="pending-requests">
+                <h3>Pending Join Requests</h3>
+                {% if pending_requests %}
+                    <ul class="list-group">
+                        {% for request in pending_requests %}
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                {% if request.user.buddyprofile %}
+                                    <a href="{% url 'buddy_profile' request.user.id %}">{{ request.user.username }}</a>
+                                {% else %}
+                                    <a href="{% url 'group_portal:view_group_organiser_profile' request.user.id %}">{{ request.user.username }}</a>
+                                {% endif %}
+                                <div class="btn-group">
+                                    <form method="post" action="{% url 'group_portal:handle_join_request' group.id request.id %}" style="display: inline;">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="action" value="accept">
+                                        <button type="submit" class="btn btn-success btn-sm">Accept</button>
+                                    </form>
+                                    <form method="post" action="{% url 'group_portal:handle_join_request' group.id request.id %}" style="display: inline;">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="action" value="decline">
+                                        <button type="submit" class="btn btn-danger btn-sm">Decline</button>
+                                    </form>
+                                </div>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                {% else %}
+                    <p>No pending requests</p>
+                {% endif %}
+                
+            </div>
+
+            <div class="members-list">
+                <h3>Group Members ({{ members.count }})</h3>
+                {% if members %}
+                    <ul class="list-group">
+                        {% for member in members %}
+                            <li class="list-group-item">
+                                <a href="{% url 'buddy_profile' member.id %}">{{ member.username }}</a>
+                                {% if member == group_profile.organizer %}  <!-- or group.organizer for group_detail.html -->
+                                    <span class="badge bg-primary">Organizer</span>
+                                {% endif %}
+                            </li>
+                        {% endfor %}
+                    </ul>
+                {% else %}
+                    <p>No members yet</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+<style>
+    .members-list {
+        margin: 20px 0;
+    }
+    
+    .members-list .list-group-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    
+    .badge {
+        font-size: 0.8em;
+        padding: 0.4em 0.8em;
+    }
+</style>
+{% endblock %}

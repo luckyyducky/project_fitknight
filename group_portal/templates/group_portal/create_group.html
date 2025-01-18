@@ -1,0 +1,178 @@
+{% extends 'group_portal/base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow-sm">
+                <div class="card-body p-4">
+                    <h2 class="text-center mb-4">Create New Group</h2>
+
+                    {% if messages %}
+                        {% for message in messages %}
+                            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                                {{ message }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+
+                    <form method="POST" enctype="multipart/form-data" novalidate>
+                        {% csrf_token %}
+                        
+                        <!-- Group Name -->
+                        <div class="mb-3">
+                            <label for="id_group_name" class="form-label">Group Name</label>
+                            {{ form.group_name }}
+                            {% if form.group_name.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {% for error in form.group_name.errors %}
+                                        {{ error }}
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Profile Picture Section -->
+                        <div class="mb-4">
+                            <label for="id_group_picture" class="form-label">Group Picture</label>
+                            <div class="d-flex align-items-start">
+                                <div class="me-3">
+                                    {% if group.group_picture %}
+                                        <img src="{{ group.group_picture.url }}" class="img-thumbnail" alt="{{ group.group_name }}" style="max-width: 150px;">
+                                    {% else %}
+                                        <img src="{% static 'group_pics/default.png' %}" class="img-thumbnail" alt="Default Group Picture" style="max-width: 150px;">
+                                    {% endif %}
+                                </div>
+                                <div>
+                                    {{ form.group_picture }}
+                                    <p><small class="text-muted">Optional: Upload a group profile picture</small></p>
+                                </div>
+                            </div>
+                        </div>
+
+
+
+                        <!-- Description -->
+                        <div class="mb-3">
+                            <label for="id_description" class="form-label">Description</label>
+                            <div>
+                            <small class="text-muted">Describe your group's purpose and activities</small>
+                          </div>
+                            {{ form.description }}
+                            {% if form.description.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {% for error in form.description.errors %}
+                                        {{ error }}
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                            
+                        </div>
+
+                        <!-- Activity Type -->
+                        <div class="mb-3">
+                            <label class="form-label">Activity Type</label>
+                            <div class="row g-3">
+                                {% for choice in form.activity_type %}
+                                    <div class="col-md-4">
+                                        <div class="form-check">
+                                            {{ choice.tag }}
+                                            <label class="form-check-label" for="{{ choice.id_for_label }}">
+                                                {{ choice.choice_label }}
+                                            </label>
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                            {% if form.activity_type.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {% for error in form.activity_type.errors %}
+                                        {{ error }}
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Schedule -->
+                        <div class="mb-3">
+                            <label class="form-label">Schedule</label>
+                            <div class="row g-3">
+                                {% for choice in form.schedule %}
+                                    <div class="col-md-4">
+                                        <div class="form-check">
+                                            {{ choice.tag }}
+                                            <label class="form-check-label" for="{{ choice.id_for_label }}">
+                                                {{ choice.choice_label }}
+                                            </label>
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                            {% if form.schedule.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {% for error in form.schedule.errors %}
+                                        {{ error }}
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Location -->
+                        <div class="mb-3">
+                            <label class="form-label">Location</label>
+                            <div class="row g-3">
+                                {% for choice in form.location %}
+                                    <div class="col-md-4">
+                                        <div class="form-check">
+                                            {{ choice.tag }}
+                                            <label class="form-check-label" for="{{ choice.id_for_label }}">
+                                                {{ choice.choice_label }}
+                                            </label>
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                            {% if form.location.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {% for error in form.location.errors %}
+                                        {{ error }}
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <div class="mt-4">
+                            <button type="submit" class="btn btn-primary w-100">Create Group</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .invalid-feedback {
+        color: #dc3545;
+        font-size: 0.875em;
+        display: block;
+    }
+    
+    .form-check-input:checked {
+        background-color: #0d6efd;
+        border-color: #0d6efd;
+    }
+    
+    .card {
+        border-radius: 1rem;
+        border: none;
+    }
+    
+    .form-control:focus {
+        border-color: #86b7fe;
+        box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+    }
+</style>
+{% endblock %}

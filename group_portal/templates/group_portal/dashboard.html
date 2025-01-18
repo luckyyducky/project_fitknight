@@ -1,0 +1,76 @@
+{% extends "group_portal/base.html" %}
+{% load static %}
+
+{% block content %}
+
+{% if messages %}
+<div class="container mt-3">
+    {% for message in messages %}
+    <div class="alert alert-info alert-dismissible fade show" role="alert">
+        {{ message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
+
+<div class="container">
+    <h2 class="text-center mb-4">Group Organizer Dashboard</h2>
+  
+  <div class="text-center mb-4">
+      <a href="{% url 'group_portal:create_group' %}" class="btn btn-primary">Create New Group</a>
+  </div>
+  <div class="text-center mb-4">
+    <a href="{% url 'buddy_finder_portal' %}" class="btn btn-primary">
+        Find Workout Buddies
+    </a>
+  </div>
+  
+
+    <div class="row">
+        {% if groups %}
+            {% for group in groups %}
+            <div class="col-md-4 mb-4">
+                <div class="card h-100">
+                    <div class="row g-0">
+                        <div class="col-md-4">
+                            {% if group.group_picture %}
+                                <img src="{{ group.group_picture.url }}" 
+                                     class="img-fluid rounded-start" 
+                                     alt="{{ group.group_name }}"
+                                     style="height: 200px; object-fit: cover;">
+                            {% else %}
+                                <img src="{% static 'profile_pics/default.png' %}" 
+                                     class="img-fluid rounded-start" 
+                                     alt="Default Group Picture"
+                                     style="height: 200px; object-fit: cover;">
+                            {% endif %}
+                        </div>
+                        <div class="col-md-8">
+                            <div class="card-body">
+                                <h5 class="card-title">{{ group.group_name }}</h5>
+                                <p class="card-text">
+                                    {% if group.description %}
+                                        {{ group.description|truncatewords:20 }}
+                                    {% else %}
+                                        No description available
+                                    {% endif %}
+                                </p>
+                                <div class="mt-auto">
+                                    <a href="{% url 'group_portal:group_detail' group.id %}" 
+                                       class="btn btn-secondary btn-sm">View Group</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <div class="col-12 text-center">
+                <p>You haven't created any groups yet.</p>
+            </div>
+            {% endfor %}
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

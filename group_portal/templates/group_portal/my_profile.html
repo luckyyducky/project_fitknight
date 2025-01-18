@@ -1,0 +1,59 @@
+{% extends "group_portal/base.html" %}
+{% load static %}
+{% block content %}
+<div class="container">
+    <h2 class="text-center mb-4">My Profile</h2>
+
+    <div class="row">
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body text-center">
+                    {% if profile.group_organiser_picture %}
+                        <img src="{{ profile.group_organiser_picture.url }}" class="img-thumbnail" alt="{{ profile.user.username }}" style="max-width: 150px;">
+                    {% else %}
+                        <img src="{% static 'profile_pics/default.png' %}" class="img-thumbnail" alt="Default Profile Picture" style="max-width: 150px;">
+                    {% endif %}
+                    <p class="small text-muted">Profile Picture</p>
+                </div>
+            </div>
+        </div>
+        <!-- Profile Details and Form Section -->
+        <div class="col-md-8">
+            <form method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="form-group mb-3">
+                    <label for="about" class="form-label">About</label>
+                    {{ form.about }}
+                </div>
+                <div class="form-group mb-3">
+                    <label for="milestones" class="form-label">Milestones</label>
+                    {{ form.milestones }}
+                </div>
+                <div class="form-group mb-3">
+                    <label for="group_organiser_picture" class="form-label">Profile Picture</label>
+                    {{ form.group_organiser_picture }}
+                    <p><small class="text-muted">Optional: Upload a group profile picture</small></p>
+                </div>
+
+                <div class="form-group mb-3">
+                    <label>Privacy Settings</label>
+                    <div class="form-check">
+                        {{ form.show_email }}
+                        <label class="form-check-label" for="{{ form.show_email.id_for_label }}">
+                            Show Email ({% if user.email %}{{ user.email }}{% else %}No Email Provided{% endif %})  to Group Members
+                        </label>
+                    </div>
+                    <div class="form-check">
+                        {{ form.show_phone }}
+                        <label class="form-check-label" for="{{ form.show_phone.id_for_label }}">
+                            Show Phone Number ({% if user.phone_number %}{{ user.phone_number }}{% else %}No Phone Number Provided{% endif %}) to Group Members
+                        </label>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary mt-3">Update Profile</button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
