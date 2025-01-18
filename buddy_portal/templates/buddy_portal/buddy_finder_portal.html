@@ -1,36 +1,259 @@
 {% extends 'buddy_portal/base.html' %}
 {% load static %}
-{% block content %}
-    <h2>Buddy Finder Portal</h2>
-    
-    {% if buddy_profiles %}
-        <ul>
-            {% for profile in buddy_profiles %}
-                <li>
-                    <img 
-                        src="{% if profile.profile_picture and profile.profile_picture.name %}{{ profile.profile_picture.url }}{% else %}{{ MEDIA_URL }}/media/profile_pics/default.png{% endif %}" 
-                        alt="Profile Picture" 
-                        width="150" 
-                        height="150"
-                    >
 
-                    <div class="buddy-profile">
-                        <h4>{{ profile.user.username }}</h4>
-                        <p><strong>Fitness Goals:</strong> {{ profile.fitness_goals }}</p>
-                        <p><strong>Workout Preferences:</strong> {{ profile.workout_preferences }}</p>
-                        <p><strong>Availability:</strong> {{ profile.availability }}</p>
-                        <p><strong>Milestones:</strong> {{ profile.milestones }}</p>
-                        {% if profile.show_phone and profile.contact_phone %}
-                            <p><strong>Contact Phone:</strong> {{ profile.contact_phone }}</p>
-                        {% endif %}
-                        {% if profile.show_email and profile.contact_email %}
-                            <p><strong>Contact Email:</strong> {{ profile.contact_email }}</p>
-                        {% endif %}
+{% block content %}
+
+{% if messages %}
+<div class="container mt-3">
+    {% for message in messages %}
+    <div class="alert alert-info alert-dismissible fade show" role="alert">
+        {{ message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
+
+<div class="container mt-4">
+    <h2 class="mb-4">Buddy Finder Portal</h2>
+    <!-- Navigation Tabs -->
+    <ul class="nav nav-tabs mb-4" id="portalTabs" role="tablist">
+        <li class="nav-item" role="presentation">
+            <button class="nav-link {% if active_tab == 'buddies' %}active{% endif %}" 
+                    id="buddies-tab" 
+                    data-bs-toggle="tab" 
+                    data-bs-target="#buddies" 
+                    type="button" 
+                    role="tab">
+                Find Buddies
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link {% if active_tab == 'groups' %}active{% endif %}" 
+                    id="groups-tab" 
+                    data-bs-toggle="tab" 
+                    data-bs-target="#groups" 
+                    type="button" 
+                    role="tab">
+                Find Groups
+            </button>
+        </li>
+    </ul>
+
+    <!-- Tab Content -->
+    <div class="tab-content" id="portalTabsContent">
+        <!-- Buddies Tab -->
+        <div class="tab-pane fade {% if active_tab == 'buddies' %}show active{% endif %}" id="buddies" role="tabpanel">
+            <div class="filter-section">
+                <button class="btn btn-secondary w-100 mb-3" type="button" data-bs-toggle="collapse" data-bs-target="#buddyFilters" aria-expanded="{% if 'buddy_filter' in request.GET %}true{% else %}false{% endif %}">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span>Apply Filters to Find Your Perfect Workout Buddy</span>
+                        <i class="bi bi-chevron-down"></i>
                     </div>
-                </li>
-            {% endfor %}
-        </ul>
-    {% else %}
-        <p>No buddy profiles available at the moment.</p>
-    {% endif %}
+                </button>
+                <div class="collapse {% if 'buddy_filter' in request.GET %}show{% endif %}" id="buddyFilters">
+                    <form method="get">
+                        <div class="filter-title">Filter Buddies</div>
+                        {{ buddy_form.as_p }}
+                        <button type="submit" class="btn btn-primary filter-button" name="buddy_filter">Apply Filters/Refresh</button>
+                    </form>
+                </div>
+            </div>
+
+            {% if buddy_profiles %}
+                <div class="buddy-list">
+                    {% for profile in buddy_profiles %}
+                        <div class="buddy-card">
+                            <div class="d-flex align-items-start">
+                                <img 
+                                    src="{% if profile.profile_picture and profile.profile_picture.name %}{{ profile.profile_picture.url }}{% else %}{{ MEDIA_URL }}/media/profile_pics/default.png{% endif %}"
+                                    alt="Profile Picture"
+                                    class="buddy-picture me-3"
+                                >
+                                <div class="buddy-profile">
+                                    <h4><a href="{% url 'buddy_profile' pk=profile.pk %}">{{ profile.user.username }}</a></h4>
+                                    <p><strong>Fitness Goals:</strong> {{ profile.fitness_goals }}</p>
+                                    <p><strong>Workout Preferences:</strong> {{ profile.workout_preferences }}</p>
+                                    <p><strong>Availability:</strong> {{ profile.availability }}</p>
+                                    <p><strong>Preferred Locations:</strong> {{ profile.location }}</p>
+                                    <p><strong>Milestones:</strong> {{ profile.milestones }}</p>
+                                    {% if profile.show_phone and profile.contact_phone %}
+                                        <p><strong>Contact Phone:</strong> {{ profile.contact_phone }}</p>
+                                    {% endif %}
+                                    {% if profile.show_email and profile.contact_email %}
+                                        <p><strong>Contact Email:</strong> {{ profile.contact_email }}</p>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <p>No buddy profiles available at the moment.</p>
+            {% endif %}
+        </div>
+
+        <!-- Groups Tab -->
+        <div class="tab-pane fade {% if active_tab == 'groups' %}show active{% endif %}" id="groups" role="tabpanel">
+            <div class="filter-section">
+                <button class="btn btn-secondary w-100 mb-3" type="button" data-bs-toggle="collapse" data-bs-target="#groupFilters" aria-expanded="{% if 'group_filter' in request.GET %}true{% else %}false{% endif %}">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span>Apply Filters to Find Your Perfect Group</span>
+                        <i class="bi bi-chevron-down"></i>
+                    </div>
+                </button>
+                <div class="collapse {% if 'group_filter' in request.GET %}show{% endif %}" id="groupFilters">
+                    <form method="get">
+                        <div class="filter-title">Filter Groups</div>
+                        <div class="group-filter-form">
+                            {% for field in group_form %}
+                                <div class="filter-field">
+                                    <label class="filter-label">{{ field.label }}</label>
+                                    <div class="checkbox-group">
+                                        {{ field }}
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                        <button type="submit" class="btn btn-primary filter-button" name="group_filter">Apply Filters/Refresh</button>
+                    </form>
+                </div>
+            </div>
+
+            {% if groups %}
+                <div class="group-list">
+                    {% for group in groups %}
+                        <div class="buddy-card">
+                            <div class="d-flex align-items-start">
+                                <img 
+                                    src="{% if group.group_picture %}{{ group.group_picture.url }}{% else %}{% static 'group_pics/default.png' %}{% endif %}"
+                                    alt="Group Picture"
+                                    class="buddy-picture me-3"
+                                >
+                                <div class="group-profile">
+                                    <h4><a href="{% url 'group_profile' pk=group.pk %}">{{ group.group_name }}</a></h4>
+                                    <p><strong>Organizer:</strong> {{ group.organizer.username }}</p>
+                                    <p><strong>Description:</strong> {{ group.description }}</p>
+                                    <p><strong>Activity Types:</strong> {{ group.activity_type }}</p>
+                                    <p><strong>Schedule:</strong> {{ group.schedule }}</p>
+                                    <p><strong>Location:</strong> {{ group.location }}</p>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <p>No groups available at the moment.</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<style>
+    .filter-section {
+        padding: 15px;
+        background-color: #f8f9fa;
+        border-radius: 8px;
+        margin-bottom: 20px;
+    }
+    .filter-title {
+        font-size: 1.2rem;
+        font-weight: bold;
+        margin-bottom: 15px;
+    }
+    .filter-button {
+        margin-top: 10px;
+        width: 100%;
+    }
+    .buddy-card {
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        padding: 20px;
+        margin-bottom: 15px;
+        box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.1);
+    }
+    .buddy-picture {
+        width: 150px;
+        height: 150px;
+        border-radius: 8px;
+        object-fit: cover;
+    }
+    .buddy-profile, .group-profile {
+        flex: 1;
+    }
+    .buddy-profile h4, .group-profile h4 {
+        margin-top: 0;
+        margin-bottom: 15px;
+    }
+    .buddy-profile p, .group-profile p {
+        margin-bottom: 8px;
+    }
+    .nav-tabs .nav-link {
+        color: #495057;
+    }
+    .nav-tabs .nav-link.active {
+        font-weight: bold;
+    }
+    /* New styles for group filter form */
+    .group-filter-form {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+    }
+    .filter-field {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+    }
+    .filter-label {
+        font-weight: 600;
+        margin-bottom: 5px;
+    }
+    .checkbox-group {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+    }
+    .checkbox-group label {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 0;
+    }
+    .form-check-input {
+        margin-top: 0;
+    }
+
+    .filter-section .btn-secondary {
+        background-color: #f8f9fa;
+        border-color: #ddd;
+        color: #333;
+        text-align: left;
+        padding: 10px 15px;
+    }
+
+    .filter-section .btn-secondary:hover {
+        background-color: #e9ecef;
+    }
+
+    .filter-section .collapse {
+        border-top: 1px solid #ddd;
+        padding-top: 15px;
+    }
+
+    .bi-chevron-down {
+        transition: transform 0.2s;
+    }
+
+    [aria-expanded="true"] .bi-chevron-down {
+        transform: rotate(180deg);
+    }
+
+    .filter-section {
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        margin-bottom: 20px;
+        padding: 15px;
+    }
+</style>
 {% endblock %}
