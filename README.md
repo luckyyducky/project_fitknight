@@ -51,9 +51,10 @@ Installation
 
 Clone the repository:
 
-bashCopygit clone [repository-url]
+```
+git clone [repository-url]
 cd fitknight
-
+```
 Create and activate a virtual environment:
 
 bashCopypython -m venv my-venv
