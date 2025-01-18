@@ -23,7 +23,7 @@ def signup(request):
             user = form.save(commit=False)
 
             if not user.profile_picture:
-                user.profile_picture = 'profile_pics/default.png'  # Default picture
+                user.profile_picture = 'profile_pics/default.png'  
 
             user_type = form.cleaned_data.get('user_type')
             if user_type == 'buddy_finder':
@@ -32,14 +32,13 @@ def signup(request):
                 user.is_group_organizer = True
             user.save()
             
-            # Create BuddyProfile immediately after signup for buddy_finder users
             if user.is_buddy_finder:
                 BuddyProfile.objects.create(
                     user=user,
                     profile_picture='profile_pics/default.png',
-                    contact_phone=form.cleaned_data.get('phone_number', ''),  # Adjust field names based on your form
+                    contact_phone=form.cleaned_data.get('phone_number', ''),  
                     contact_email=user.email,
-                    show_phone=True,  # Default privacy settings
+                    show_phone=True,  
                     show_email=True,  
                 )
             
