@@ -51,6 +51,12 @@
             <small class="form-text text-muted">You can upload a new profile picture or leave it as is.</small>
             </div>
 
+            <!-- About  Section -->
+            <div class="mb-3">
+                <label for="{{ form.about.id_for_label }}" class="form-label">{{ form.about.label }}</label>
+                {{ form.about }}
+            </div>
+
             <!-- Fitness Goals Section -->
             <div class="mb-3">
                 <label class="form-label">{{ form.fitness_goals.label }}</label>
@@ -82,6 +88,19 @@
                 <label class="form-label">{{ form.availability.label }}</label>
                 <div>
                     {% for choice in form.availability %}
+                        <div class="form-check">
+                            {{ choice.tag }}
+                            <label class="form-check-label" for="{{ choice.id_for_label }}">{{ choice.choice_label }}</label>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- Location Section -->
+            <div class="mb-3">
+                <label class="form-label">{{ form.location.label }}</label>
+                <div>
+                    {% for choice in form.location %}
                         <div class="form-check">
                             {{ choice.tag }}
                             <label class="form-check-label" for="{{ choice.id_for_label }}">{{ choice.choice_label }}</label>
