@@ -93,6 +93,16 @@
             {% endfor %}
           </div>
 
+        <!-- Location Section -->
+        <div class="form-group mb-3">
+            <label>Preferred Locations</label>
+            {% for goal in form.location %}
+              <div class="form-check ms-4">
+                {{ goal }}
+              </div>
+            {% endfor %}
+          </div>
+
         <!-- Milestones Section -->
         <div class="form-group mb-3">
             <label for="id_milestones">Milestones</label>
@@ -105,13 +115,13 @@
             <div class="form-check">
                 {{ form.show_email }}
                 <label class="form-check-label" for="{{ form.show_email.id_for_label }}">
-                    Show Email
+                    Show Email ({{ user.buddyprofile.contact_email }}) to other users
                 </label>
             </div>
             <div class="form-check">
                 {{ form.show_phone }}
                 <label class="form-check-label" for="{{ form.show_phone.id_for_label }}">
-                    Show Phone Number
+                    Show Phone Number ({{ user.buddyprofile.contact_phone }}) to other users
                 </label>
             </div>
         </div>
