@@ -47,7 +47,7 @@ class GroupOrganiserProfile(models.Model):
     about = models.TextField(null=True, blank=True)
     group_organiser_picture = models.ImageField(upload_to='profile_pics/', null=True, blank=True)
     milestones = models.TextField(null=True, blank=True)
-    show_email = models.BooleanField(default=True)  # Add show_email field
+    show_email = models.BooleanField(default=True)  
     show_phone = models.BooleanField(default=True)
     
     def __str__(self):
