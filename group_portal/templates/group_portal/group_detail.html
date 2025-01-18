@@ -142,7 +142,7 @@
                         {% for member in members %}
                             <li class="list-group-item">
                                 <a href="{% url 'buddy_profile' member.id %}">{{ member.username }}</a>
-                                {% if member == group_profile.organizer %}  <!-- or group.organizer for group_detail.html -->
+                                {% if member == group_profile.organizer %} 
                                     <span class="badge bg-primary">Organizer</span>
                                 {% endif %}
                             </li>
