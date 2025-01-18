@@ -15,7 +15,6 @@ def group_dashboard(request):
     unread_notifications = request.user.notifications.filter(is_read=False)
     for notification in unread_notifications:
         messages.info(request, notification.message)
-        # Mark as read after showing
         notification.is_read = True
         notification.save()
     return render(request, 'group_portal/dashboard.html', {
@@ -25,9 +24,8 @@ def group_dashboard(request):
 
 @login_required
 def group_organiser_details(request):
-    # Get or create the group organizer profile
     profile, created = GroupOrganiserProfile.objects.get_or_create(
-        user=request.user,  # Use 'organizer' instead of 'user'
+        user=request.user,  
         defaults={'group_organiser_picture': 'profile_pics/default.png'}
     )
     
@@ -36,7 +34,7 @@ def group_organiser_details(request):
         if form.is_valid():
             form.save()
             messages.success(request, "Profile updated successfully!")
-            return redirect('group_portal:group_dashboard')  # Redirect to group dashboard after saving
+            return redirect('group_portal:group_dashboard')  
         else:
             messages.error(request, "Error updating profile")
     else:
@@ -71,7 +69,7 @@ def my_profile(request):
         form = GroupOrganiserDetailsForm(request.POST, request.FILES, instance=profile)
         if form.is_valid():
             form.save()
-            return redirect('group_portal:group_dashboard')  # Redirect to profile page after updating
+            return redirect('group_portal:group_dashboard')  
     else:
         form = GroupOrganiserDetailsForm(instance=profile)
 
