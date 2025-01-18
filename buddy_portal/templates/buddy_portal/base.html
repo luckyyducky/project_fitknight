@@ -41,27 +41,15 @@
             {% if user.is_authenticated %}
             <div class="navbar-nav">
                 <a class="nav-link" href="{% url 'logout' %}">Logout</a>
-                {% if user.is_group_organizer %}  <!-- assuming you have this relation -->
+                {% if user.is_group_organizer %}  
                     <a class="nav-link" href="{% url 'group_portal:my_profile' %}">My Profile</a>
                 {% else %}
                     <a class="nav-link" href="{% url 'my_profile' %}">My Profile</a>
-                {% endif %} <!-- Add this line -->
+                {% endif %} 
             </div>
             {% endif %}
         </div>
     </nav>
-
-    {% comment %} {% if messages %}
-        <div class="container mt-3">
-            {% for message in messages %}
-                <div class="alert alert-{{ message.tags }}">
-                    {{ message }}
-                </div>
-            {% endfor %}
-        </div>
-    {% endif %} {% endcomment %}
-
-    {% block content %}{% endblock %}
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
