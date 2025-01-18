@@ -46,7 +46,7 @@ def signup(request):
             login(request, user)
             if user.is_buddy_finder:
                 return redirect('buddy_finder_details')
-            return redirect('group_portal:group_dashboard')
+            return redirect('group_portal:group_organiser_details')
     else:
         form = CustomUserCreationForm()
     
@@ -59,7 +59,7 @@ class CustomLoginView(LoginView):
     def get_success_url(self):
         if self.request.user.is_buddy_finder:
             return reverse_lazy('buddy_finder_portal')
-        return reverse_lazy('group_organizer')
+        return reverse_lazy('group_portal:group_dashboard')
 
 @login_required
 def logout_view(request):
