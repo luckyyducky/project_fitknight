@@ -39,6 +39,8 @@ FitKnight is a web platform designed to connect fitness enthusiasts, helping the
 - **Media Handling**: Django File Storage
 - **Static Files**: Django Static Files
 
+**Note:** The files listed in the repository are organized in the same order as they appear in the project structure.
+
 ## Installation
 
 Clone the repository:
@@ -77,3 +79,4 @@ Run the development server:
 ```
 python manage.py runserver
 ```
+
